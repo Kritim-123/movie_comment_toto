@@ -4,7 +4,7 @@ const User = require("../models/User");
 
 // Create a User using: POST "/api/auth". Doesn't require auth
 
-router.get("/", (req, res) => {
+router.post("/", (req, res) => {
   console.log(req.body);
   const user = new User(req.body);
   user
