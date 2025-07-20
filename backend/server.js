@@ -1,3 +1,3 @@
-const connectToMongo = require("./db");
+const { connectToMongo } = require("./db");
 
 connectToMongo();
