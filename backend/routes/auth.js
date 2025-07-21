@@ -4,7 +4,7 @@ const User = require("../models/User");
 const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
-const fetchuser = require("../middleware/fetchuser");
+
 
 // Create a User using: POST "/api/auth/createuser". No login required
 router.post(
@@ -43,12 +43,9 @@ router.post(
         },
       };
 
-      const authtoken = jwt.sign(data, process.env.JWT_SECRET, (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      });
+      const authtoken = jwt.sign(data, process.env.JWT_SECRET);
 
-      res.status(201).json(user);
+      res.status(201).json({ token: authtoken });
     } catch (error) {
       console.error(error);
 
@@ -57,6 +54,48 @@ router.post(
         return res.status(400).json({ error: "Email already exists" });
       }
 
+      res.status(500).send("Server error");
+    }
+  }
+);
+
+// Authenticate a User using: POST "/api/auth/login". No login required
+router.post(
+  "/login",
+  [
+    body("email", "Enter a valid email").isEmail(),
+    body("password", "Password cannot be blank").exists(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).json({ error: "Invalid credentials" });
+      }
+
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        return res.status(400).json({ error: "Invalid credentials" });
+      }
+
+      const data = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      const authtoken = jwt.sign(data, process.env.JWT_SECRET);
+
+      res.status(201).json({ token: authtoken });
+    } catch (error) {
+      console.error(error);
       res.status(500).send("Server error");
     }
   }
