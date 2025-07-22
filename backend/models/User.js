@@ -33,6 +33,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  comment: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
+  likedComments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
 });
 
 module.exports = mongoose.model("User", userSchema);
