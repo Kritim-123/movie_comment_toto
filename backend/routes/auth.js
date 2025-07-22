@@ -105,9 +105,11 @@ router.post(
 
 router.post("/getuser", fetchuser, async (req, res) => {
   try {
-    const userId = req.user.id;
-    const user = await User.findById(userId).select("-password");
-    res.status(200).send(user);
+    const user = await User.findById(req.user.id)
+      .populate("comments")
+      .populate("likedComments")
+      .select("-password");
+    res.send(user);
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");
