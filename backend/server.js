@@ -13,8 +13,14 @@ app.get("/", (req, res) => {
 });
 
 //Available routes
+
+// For authetication 
 app.use("/api/auth", require("./routes/auth"));
+
+//
+
 app.use("/api/comment", require("./routes/comment"));
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

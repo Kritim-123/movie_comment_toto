@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 
 interface LoginFormData {
@@ -6,7 +6,7 @@ interface LoginFormData {
   password: string;
 }
 
-export default function Login() {
+export default function Login({ onLogin }: { onLogin: () => void }) {
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -29,6 +29,7 @@ export default function Login() {
       if (res.ok && data.token) {
         localStorage.setItem("token", data.token);
         alert("Login successful!");
+        onLogin();
       } else {
         alert(data.error || "Login failed");
       }

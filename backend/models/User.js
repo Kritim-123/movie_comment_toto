@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 
-  comment: [
+  comments: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",

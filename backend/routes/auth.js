@@ -5,6 +5,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
 const fetchuser = require("../middleware/fetchUser");
+const Comment = require("../models/Comment");
 
 // Create a User using: POST "/api/auth/createuser". No login required
 router.post(
@@ -111,7 +112,7 @@ router.post("/getuser", fetchuser, async (req, res) => {
       .select("-password");
     res.send(user);
   } catch (error) {
-    console.error(error);
+    console.error("GETUSER ERROR:", error.message);
     res.status(500).send("Server error");
   }
 });

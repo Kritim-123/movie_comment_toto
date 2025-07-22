@@ -7,7 +7,7 @@ interface SignupFormData {
   password: string;
 }
 
-export default function Signup() {
+export default function Signup({ onSignup }: { onSignup: () => void }) {
   const [formData, setFormData] = useState<SignupFormData>({
     name: "",
     email: "",
@@ -44,6 +44,7 @@ export default function Signup() {
 
         // Auto-hide after 3s
         setTimeout(() => setMessage(null), 3000);
+        onSignup();
       } else {
         setMessage({
           type: "error",
