@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface User {
   name: string;
@@ -10,6 +10,7 @@ interface User {
 export default function Profile() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,6 +40,35 @@ export default function Profile() {
 
     fetchUser();
   }, []);
+
+  const handleAvatarChange = async () => {
+    if (!file) return alert("Please select a File");
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const res = await fetch("http://localhost:4000/api/user/upload-avatar", {
+        method: "POST",
+        headers: {
+          "auth-token": localStorage.getItem("token") || "",
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        return alert("Failed to update avatar");
+      }
+
+      const updatedUser: User = await res.json();
+      setUser(updatedUser);
+      setFile(null);
+      alert("Avatar updated successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Error udating avatar");
+    }
+  };
 
   if (loading) {
     return <p className="text-center mt-6">Loading profile...</p>;
@@ -70,6 +100,22 @@ export default function Profile() {
         <p className="mt-2 text-gray-700">
           {user.bio ? user.bio : "No bio yet."}
         </p>
+
+        {/* Change avatar*/}
+        <div className="mt-4">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+            className="border border-gray-300 p-2 rounded w-full"
+          />
+          <button
+            onClick={handleAvatarChange}
+            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Upload New Avatar
+          </button>
+        </div>
       </div>
     </div>
   );

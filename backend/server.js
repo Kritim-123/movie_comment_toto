@@ -17,7 +17,8 @@ app.get("/", (req, res) => {
 // For authetication 
 app.use("/api/auth", require("./routes/auth"));
 
-//
+// For changing user profile
+app.use("/api/user", require("./routes/userProfile"));
 
 app.use("/api/comment", require("./routes/comment"));
 
